@@ -1,0 +1,136 @@
+{
+  "nav": {
+    "newQuery": "New Query",
+    "darkMode": "Dark Mode",
+    "lightMode": "Light Mode",
+    "language": "Language",
+    "logout": "Logout"
+  },
+  "landing": {
+    "headline": "Navigate BIS Certification. Instantly.",
+    "subhead": "AI-powered guidance for IS codes, schemes, fees & labs — in plain English or Hindi.",
+    "manufacturer": "Manufacturer",
+    "importer": "Importer",
+    "consumer": "Consumer",
+    "manufacturerDesc": "Get ISI/CRS certification roadmaps, lab locations, and fee breakdowns for your products.",
+    "importerDesc": "Navigate FMCS and CRS compliance for imported goods with step-by-step guidance.",
+    "consumerDesc": "Verify ISI marks, hallmarks, and product certifications instantly.",
+    "stats": {
+      "standards": "20,000+ IS Standards",
+      "schemes": "5 Certification Schemes",
+      "labs": "500+ Recognized Labs",
+      "languages": "10+ Indian Languages"
+    },
+    "impact": {
+      "faster": "70% Faster Compliance Discovery",
+      "helpdesk": "60% Less Helpdesk Load",
+      "trust": "100% Consumer Trust via Instant Verification",
+      "zero": "Zero Compliance Mistakes for Startups"
+    },
+    "getStarted": "Get Started",
+    "whatsapp": "Get roadmap updates on WhatsApp"
+  },
+  "chat": {
+    "placeholder": "Describe your product or question...",
+    "analyze": "Analyze →",
+    "examples": {
+      "smartwatch": "I want to sell smartwatches in India",
+      "led": "How do I certify LED bulbs?",
+      "laptop": "Is my imported laptop CRS compliant?",
+      "helmet": "Verify ISI mark on a helmet",
+      "gold": "I want to hallmark gold jewellery"
+    },
+    "history": "Query History",
+    "voice": "Voice Input"
+  },
+  "pipeline": {
+    "stage1": "Query & Persona Input",
+    "stage2": "Intent & Triage Classifier",
+    "stage3": "Hybrid RAG & Vector Retrieval",
+    "stage4": "Multi-Agent Reasoning",
+    "stage5": "Clause Citation & Verification",
+    "stage6": "Roadmap & Voice Output",
+    "searching": "searching 20,000+ IS standards in vector DB",
+    "verifying": "verifying clause references",
+    "ready": "Roadmap ready!"
+  },
+  "roadmap": {
+    "triageResult": "Triage Result",
+    "productDetected": "Product Detected",
+    "category": "Category",
+    "persona": "Persona",
+    "scheme": "Scheme",
+    "isCode": "IS Code",
+    "viewStandard": "View Standard →",
+    "verifiedSource": "Verified Source",
+    "clauseGrounding": "Clause-Level Grounding · Cross-checked against BIS gazette.",
+    "steps": "Compliance Roadmap",
+    "fees": "Fee Structure",
+    "updated": "Updated: Feb 2026",
+    "applicationFee": "Application Fee",
+    "annualFee": "Annual Fee",
+    "msme": "MSME",
+    "large": "Large Enterprise",
+    "importerFee": "Importer",
+    "portalLinks": "Portal Quick Links",
+    "exportPdf": "Export as PDF",
+    "knowledgeGraph": "Product → Standard → Lab Mapping"
+  },
+  "labFinder": {
+    "title": "Lab Finder",
+    "searchPlaceholder": "Search by city or state...",
+    "filters": {
+      "nabl": "NABL Accredited",
+      "bis": "BIS Recognized",
+      "available": "Available Now"
+    },
+    "bisRecognized": "✓ BIS Recognized",
+    "contact": "Contact",
+    "directions": "Get Directions",
+    "turnaround": "Turnaround",
+    "feeRange": "Fee Range"
+  },
+  "verify": {
+    "title": "Product Verification",
+    "inputLabel": "Enter CM/L Number or scan QR",
+    "huidLabel": "Enter HUID Number for Hallmark Verification",
+    "verifyBtn": "Verify",
+    "status": {
+      "valid": "✅ Valid",
+      "invalid": "❌ Invalid",
+      "expired": "⚠️ Expired"
+    },
+    "viewBisCare": "View on BIS Care App →"
+  },
+  "impact": {
+    "title": "Impact Dashboard",
+    "social": "Social",
+    "economic": "Economic",
+    "quality": "Quality & Regulatory",
+    "metrics": {
+      "faster": "70% Faster Compliance Discovery (MSMEs)",
+      "market": "Faster Time-to-Market (Startups)",
+      "trust": "100% Consumer Trust",
+      "helpdesk": "60% Less Helpdesk Load (Government/BIS)",
+      "atmanirbhar": "Atmanirbhar Quality (Nation)"
+    }
+  },
+  "otp": {
+    "title": "Login with OTP",
+    "mobileLabel": "Mobile Number",
+    "mobilePlaceholder": "+91 XXXXX XXXXX",
+    "sendOtp": "Send OTP",
+    "otpLabel": "Enter 4-digit OTP",
+    "verify": "Verify & Continue",
+    "guest": "Continue as Guest",
+    "success": "Login successful!"
+  },
+  "schemes": {
+    "isi": "SCHEME-I — ISI Mark (CM/L)",
+    "crs": "SCHEME-II — CRS Registration",
+    "hallmark": "Hallmarking (BIS Care)",
+    "ecomark": "Eco Mark",
+    "fmcs": "FMCS (Foreign Manufacturers Certification Scheme)"
+  },
+  "footer": "Powered by BIS NAVIC | Team Nomadic Devs | SIH 2026 | PS ID: SIH26107"
+}
