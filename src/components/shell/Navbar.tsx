@@ -33,7 +33,8 @@ export default function Navbar() {
   const navLinks = [
     pathname === "/dashboard"
       ? { label: "← Back to Home", id: "home", href: "/", active: false }
-      : { label: "← Back to Dashboard", id: "dashboard", href: "/dashboard", active: false }
+      : { label: "← Back to Dashboard", id: "dashboard", href: "/dashboard", active: false },
+    { label: "Standards Library", id: "standards", href: "/standards", active: pathname.startsWith("/standards") }
   ];
 
   return (

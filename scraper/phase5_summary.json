@@ -1,0 +1,16 @@
+{
+  "department": "AYUSH DEPARTMENT",
+  "total": 247,
+  "success": 245,
+  "failed": 2,
+  "failed_list": [
+    {
+      "is_number": "IS 19901:2026",
+      "error": "UNIQUE constraint failed: standards.raw_standard_id"
+    },
+    {
+      "is_number": "IS 19192:2025",
+      "error": "HTTPSConnectionPool(host='standardsadmin.bis.gov.in', port=443): Read timed out. (read timeout=30)"
+    }
+  ]
+}

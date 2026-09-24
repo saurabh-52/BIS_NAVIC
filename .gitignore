@@ -39,3 +39,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Python & Databases
+__pycache__/
+*.pyc
+*.sqlite
+*.db
+*.log
+scraper/ayush_chunks.json
+scraper/ayush_list.json
+scraper/depts.json
