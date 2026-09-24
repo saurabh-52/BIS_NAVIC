@@ -49,3 +49,4 @@ __pycache__/
 scraper/ayush_chunks.json
 scraper/ayush_list.json
 scraper/depts.json
+scraper/raw_store/

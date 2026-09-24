@@ -4,8 +4,7 @@ import { useState, useRef } from "react";
 import { Mic, Sparkles, FlaskConical, LogIn } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppStore } from "@/store/useAppStore";
-import { runComplianceQuery } from "@/services/mockAgentService";
-import AgentTracePanel from "./AgentTracePanel";
+import { runComplianceQuery, buildPipelineStages } from "@/services/mockAgentService";
 import type { PipelineStage, HistoryItem } from "@/services/mockData";
 import { t } from "@/lib/translations";
 
@@ -37,6 +36,7 @@ export default function ChatPanel() {
   const {
     persona, language, setPersona,
     setPipelineStages, setActiveResult,
+    setClassificationResult, setIsPipelineRunning,
     addToHistory, setActiveTab, addToast,
     setLabFinderOpen,
   } = useAppStore();
@@ -47,27 +47,47 @@ export default function ChatPanel() {
   const [isListening, setIsListening] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const q = query.trim();
     if (!q || loading) return;
+
+    // 1. Immediately remove previous results and reset state
+    setActiveResult(null);
+    setClassificationResult(null);
+
+    // 2. Initialize pipeline stages to pending (removes previous completed checkmarks)
+    const initialStages = buildPipelineStages("BIS Compliance Agent");
+    setPipelineStages(initialStages);
+    setIsPipelineRunning(true);
+
+    // 3. Switch to roadmap view so user sees the pipeline tracker right away
+    setActiveTab("roadmap");
+
+    // 4. Update UI input state
     setLoading(true);
     setProcessingQuery(q);
     setQuery("");
-  };
 
-  const handleTraceComplete = async () => {
+    // 5. Execute query with sequential stage progression
     try {
-      const result = await runComplianceQuery(processingQuery, persona, language, (stages: PipelineStage[]) => {
+      const result = await runComplianceQuery(q, persona, language, (stages: PipelineStage[]) => {
         setPipelineStages(stages);
       });
       setActiveResult(result);
-      addToHistory({ id: `h-${Date.now()}`, query: processingQuery, scheme: result.scheme, timestamp: "Just now", queryKey: result.id });
-      setActiveTab("roadmap");
-    } catch {
+      addToHistory({
+        id: `h-${Date.now()}`,
+        query: q,
+        scheme: result.scheme,
+        timestamp: "Just now",
+        queryKey: result.id
+      });
+    } catch (err) {
+      console.error(err);
       addToast({ message: "Something went wrong. Please try again.", type: "error" });
     } finally {
       setLoading(false);
       setProcessingQuery("");
+      setIsPipelineRunning(false);
     }
   };
 
@@ -281,9 +301,34 @@ export default function ChatPanel() {
 
       {/* ── Dynamic Bottom Area ──────────────── */}
       <AnimatePresence mode="wait">
-        {processingQuery ? (
-          <motion.div key="trace" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
-            <AgentTracePanel query={processingQuery} onComplete={handleTraceComplete} />
+        {loading && processingQuery ? (
+          <motion.div
+            key="processing"
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            style={{
+              padding: "16px",
+              borderRadius: "var(--radius-md)",
+              background: "rgba(250, 93, 0, 0.04)",
+              border: "1px solid rgba(250, 93, 0, 0.2)",
+              marginBottom: "20px",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "6px" }}>
+              <svg style={{ animation: "spin 1s linear infinite", flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" color="var(--color-harvest-flame)">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" fill="none" strokeDasharray="60 40" />
+              </svg>
+              <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--color-harvest-flame)" }}>
+                Pipeline Running...
+              </span>
+            </div>
+            <p style={{ fontSize: "12px", color: "var(--color-ink-black)", fontWeight: 500, margin: 0, lineHeight: 1.4 }}>
+              "{processingQuery}"
+            </p>
+            <p style={{ fontSize: "11px", color: "var(--color-driftwood)", marginTop: "6px", marginBottom: 0 }}>
+              Tracking 6 stages in the Agentic Pipeline →
+            </p>
           </motion.div>
         ) : (
           <motion.div key="quick-queries" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>

@@ -47,14 +47,18 @@ export default function AgentPipelineLog() {
                   animate={{
                     background: isCompleted || isActive
                       ? "var(--color-harvest-flame)"
+                      : "var(--color-cream-canvas)",
+                    borderColor: isCompleted || isActive
+                      ? "var(--color-harvest-flame)"
                       : "var(--color-parchment-shadow)",
-                    scale: isActive ? 1.15 : 1,
+                    scale: isActive ? 1.15 : isCompleted ? 1 : 0.95,
                   }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ duration: 0.25 }}
                   style={{
                     width: "24px",
                     height: "24px",
                     borderRadius: "50%",
+                    border: "1.5px solid",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -62,32 +66,54 @@ export default function AgentPipelineLog() {
                   }}
                 >
                   {isCompleted ? (
-                    <CheckCircle size={14} color="#fff" />
+                    <motion.div
+                      key="check"
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 450, damping: 20 }}
+                      style={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+                    >
+                      <CheckCircle size={14} color="#fff" />
+                    </motion.div>
                   ) : isActive ? (
                     <Loader2 size={12} color="#fff" className="animate-spin" style={{ animation: "spin 1s linear infinite" }} />
                   ) : (
-                    <Circle size={12} color="var(--color-bone)" fill="none" />
+                    <Circle size={10} color="var(--color-driftwood)" fill="none" />
                   )}
                 </motion.div>
+
+                {/* Animated connector line */}
                 {!isLast && (
                   <div style={{
                     width: "2px",
                     flex: 1,
-                    minHeight: "16px",
-                    background: isCompleted ? "var(--color-harvest-flame)" : "var(--color-parchment-shadow)",
-                    margin: "3px 0",
-                    transition: "background 0.3s",
-                  }} />
+                    minHeight: "18px",
+                    background: "var(--color-parchment-shadow)",
+                    margin: "4px 0",
+                    position: "relative",
+                    borderRadius: "1px",
+                    overflow: "hidden",
+                  }}>
+                    <motion.div
+                      initial={false}
+                      animate={{ height: isCompleted ? "100%" : "0%" }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      style={{
+                        width: "100%",
+                        background: "var(--color-harvest-flame)",
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                      }}
+                    />
+                  </div>
                 )}
               </div>
 
               {/* Stage content */}
-              <motion.div
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.12 }}
+              <div
                 style={{
-                  paddingBottom: isLast ? "0" : "16px",
+                  paddingBottom: isLast ? "0" : "18px",
                   flex: 1,
                 }}
               >
@@ -107,13 +133,14 @@ export default function AgentPipelineLog() {
                 {stage.detail && (
                   <p style={{
                     fontSize: "12px",
-                    color: "var(--color-ash)",
+                    color: isActive ? "var(--color-ironwood)" : "var(--color-ash)",
                     lineHeight: 1.4,
+                    transition: "color 0.3s",
                   }}>
                     {stage.detail}
                   </p>
                 )}
-              </motion.div>
+              </div>
             </div>
           );
         })}

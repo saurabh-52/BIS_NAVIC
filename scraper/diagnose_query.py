@@ -1,20 +1,38 @@
+import os
+import sys
 import json
-import asyncio
-from phase7_pipeline import azure_client, azure_deployment, GROUPS
+from dotenv import load_dotenv
 
-q = "Are there any specifications for glass containers used in Homoeopathic pharmaceuticals?"
+load_dotenv()
 
-system_prompt = f"""You are a Triage Agent. Select groups from this list ONLY: {json.dumps(GROUPS)}.
-CRITICAL RULES FOR AYUSH STANDARDS:
-- Botanical names, roots, leaves, and herbs (e.g. Euphorbia, Pilocarpus, Millefolium, Atibala) MUST be mapped to BOTH 'Agriculture, Agricultural Products and Implements' AND 'Health, Sports and Fitness Services' because BIS splits them inconsistently.
-- Ayurvedic glossaries and terminology MUST be mapped to BOTH 'Agriculture...' and 'Health...'.
-- Siddha medicine tablets (Curanam, Kudinir) are 'Health, Sports and Fitness Services', NOT Chemicals.
-Return valid JSON: {{"groups": ["group1"]}} (or empty list if irrelevant)."""
+from query_analyzer import QueryAnalyzer
 
-res = azure_client.chat.completions.create(
-    model=azure_deployment,
-    messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": q}],
-    response_format={"type": "json_object"}
+azure_client = None
+azure_deployment = None
+
+try:
+    from openai import AzureOpenAI
+    api_key = os.environ.get("AZURE_OPENAI_API_KEY")
+    endpoint = os.environ.get("AZURE_OPENAI_ENDPOINT")
+    if api_key and endpoint:
+        azure_client = AzureOpenAI(
+            api_key=api_key,
+            api_version=os.environ.get("AZURE_OPENAI_API_VERSION", "2024-08-01-preview"),
+            azure_endpoint=endpoint,
+        )
+        azure_deployment = os.environ.get("AZURE_OPENAI_CHAT_DEPLOYMENT", "gpt-4.1-mini")
+except Exception as e:
+    print(f"Azure OpenAI connection failed: {e}")
+
+# Initialize the generic Query Analyzer (auto-discovers DB metadata)
+analyzer = QueryAnalyzer(
+    azure_client=azure_client,
+    azure_deployment=azure_deployment
 )
-predicted_groups = json.loads(res.choices[0].message.content).get("groups", [])
-print(f"Predicted Groups by Triage: {predicted_groups}")
+
+# Test query
+query = sys.argv[1] if len(sys.argv) > 1 else "Are there any specifications for glass containers used in Homoeopathic pharmaceuticals?"
+
+print(f"\nAnalyzing Query with Generic Query Analyzer:\n'{query}'\n")
+result = analyzer.analyze(query)
+print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
