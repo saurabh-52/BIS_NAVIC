@@ -1,0 +1,10 @@
+requests
+fastapi
+uvicorn
+pydantic
+python-dotenv
+openai
+pinecone-client
+sentence-transformers
+beautifulsoup4
+playwright
