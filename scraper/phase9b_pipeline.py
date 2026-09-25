@@ -3,6 +3,7 @@ import json
 import time
 import asyncio
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
 from openai import AzureOpenAI
@@ -11,7 +12,15 @@ from sentence_transformers import SentenceTransformer, CrossEncoder
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(title="BIS NAVIC AI Backend")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000", "*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # 1. Global Init
 print("Initializing Models & Connections...")

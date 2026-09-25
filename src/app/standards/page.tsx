@@ -15,7 +15,7 @@ export default function StandardsPage() {
         </div>
         
         <div className="text-gray-400 max-w-3xl">
-          <p>This is a complete list of all Indian Standards published by the AYUSH department. 
+          <p>This is a complete list of Indian Standards published across departments indexed in the repository. 
           Click on any standard to view its classification details and cross-references.</p>
         </div>
 

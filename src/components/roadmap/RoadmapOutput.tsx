@@ -6,7 +6,6 @@ import { ExternalLink, FileText, CheckCircle, X, Info, Download, MapPin, Volume2
 import { useAppStore } from "@/store/useAppStore";
 import AgentPipelineLog from "@/components/pipeline/AgentPipelineLog";
 import { clauseFixtures, ClauseData } from "@/lib/clauseFixtures";
-import { getStandardsForQuery } from "@/lib/standardsFixtures";
 import StandardRecommender from "@/components/recommender/StandardRecommender";
 import { t } from "@/lib/translations";
 
@@ -22,7 +21,14 @@ export default function RoadmapOutput() {
   const { activeResult, pipelineStages, language, setLabFinderOpen } = useAppStore();
   const [selectedClause, setSelectedClause] = useState<ClauseData | null>(null);
 
-  // Empty state
+  // Strictly require all pipeline stages to be completed before showing the result!
+  const isTaskComplete = Boolean(
+    activeResult &&
+    pipelineStages.length > 0 &&
+    pipelineStages.every(s => s.status === "done")
+  );
+
+  // Empty state: no result and no stages in progress
   if (!activeResult && !pipelineStages.length) {
     return (
       <div style={{
@@ -97,10 +103,28 @@ export default function RoadmapOutput() {
       {/* Pipeline Animation */}
       <AgentPipelineLog />
 
-      {activeResult && (
-        <>
-          {/* ── Standard Recommender ────────────────────── */}
-          <StandardRecommender standards={getStandardsForQuery(activeResult.product)} />
+      {/* ONLY show results when the task has fully completed! */}
+      {isTaskComplete && activeResult && (
+        <motion.div
+          key={activeResult.id}
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+        >
+          {/* ── Standard Recommender (100% Dynamic, No Static Fixtures) ── */}
+          <StandardRecommender
+            standards={
+              activeResult.recommendedStandards && activeResult.recommendedStandards.length > 0
+                ? activeResult.recommendedStandards
+                : (activeResult.isCode && activeResult.isCode !== "Unknown" ? [{
+                    isCode: activeResult.isCode,
+                    title: activeResult.isCodeTitle || "Official Indian Standard Specification",
+                    type: "Mandatory",
+                    description: `Primary standard identified for ${activeResult.product}.`,
+                  }] : [])
+            }
+          />
 
           {/* ── Triage Card ─────────────────────────────── */}
           <motion.div
@@ -231,15 +255,23 @@ export default function RoadmapOutput() {
                 <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--color-warm-stone)" }}>
                   CLAUSE CITATION
                 </p>
-                <span className="badge-valid">
-                  <CheckCircle size={10} /> Verified Source
-                </span>
+                {activeResult.clauseData ? (
+                  <span className="badge-valid">
+                    <CheckCircle size={10} /> Verified Source
+                  </span>
+                ) : (
+                  <span style={{ fontSize: "11px", color: "var(--color-driftwood)", display: "flex", alignItems: "center", gap: "4px" }}>
+                    <Info size={11} /> Unindexed Clause
+                  </span>
+                )}
               </div>
               <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-ink-black)", marginBottom: "4px" }}>
-                {activeResult.clauseRef}
+                {activeResult.clauseData?.source || activeResult.clauseRef}
               </p>
               <p style={{ fontSize: "12px", color: "var(--color-driftwood)" }}>
-                Clause-Level Grounding · Cross-checked against BIS gazette
+                {activeResult.clauseData
+                  ? "Clause-Level Grounding · Cross-checked against BIS gazette"
+                  : "No direct standard clause in local index · Refer to official portal"}
               </p>
             </div>
           </motion.div>
@@ -285,9 +317,15 @@ export default function RoadmapOutput() {
                         <p style={{ fontSize: "14px", fontWeight: 600, color: "var(--color-ink-black)" }}>
                           {step.title}
                         </p>
-                        {activeResult.clauseFixtureId && (
+                        {(activeResult.clauseData || (activeResult.clauseFixtureId && clauseFixtures[activeResult.clauseFixtureId])) && (
                           <button
-                            onClick={() => setSelectedClause(clauseFixtures[activeResult.clauseFixtureId!])}
+                            onClick={() => {
+                              if (activeResult.clauseData) {
+                                setSelectedClause(activeResult.clauseData);
+                              } else if (activeResult.clauseFixtureId && clauseFixtures[activeResult.clauseFixtureId]) {
+                                setSelectedClause(clauseFixtures[activeResult.clauseFixtureId]);
+                              }
+                            }}
                             style={{
                               background: "rgba(16, 185, 129, 0.1)",
                               color: "var(--color-valid-green)",
@@ -468,7 +506,7 @@ export default function RoadmapOutput() {
               </button>
             </div>
           </motion.div>
-        </>
+        </motion.div>
       )}
 
       {/* ── Clause Modal ─────────────────────────────── */}
